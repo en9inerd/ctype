@@ -100,7 +100,7 @@ static void run_test(State *s) {
     seed_words(s);
 
   Frame frame = {};
-  fb_reserve(&frame, 8192);
+  fb_reserve(&frame, INITIAL_FRAME_CAP);
   s->needs_render = true;
   s->resized = true;
   render(s, &frame);
@@ -131,7 +131,7 @@ static void run_test(State *s) {
 
     bool input_changed = false;
     if (r > 0 && FD_ISSET(STDIN_FILENO, &rfds)) {
-      char buf[64];
+      char buf[INPUT_BUF_SIZE];
       ssize_t got = read(STDIN_FILENO, buf, sizeof(buf));
       if (got < 0) {
         if (errno == EINTR)
@@ -240,7 +240,7 @@ static void usage(FILE *f) {
 }
 
 int main(int argc, char **argv) {
-  State s = {.mode = MODE_WORDS, .words_target = 25};
+  State s = {.mode = MODE_WORDS, .words_target = DEFAULT_WORDS};
   const char *words_arg = nullptr;
   bool mode_set = false;
 

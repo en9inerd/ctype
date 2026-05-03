@@ -63,11 +63,11 @@ static int layout_lines(const State *s, int max_cols, int *line_first,
 }
 
 void render(State *s, Frame *f) {
-  int max_cols = s->cols - 4;
-  if (max_cols > 80)
-    max_cols = 80;
-  if (max_cols < 20)
-    max_cols = 20;
+  int max_cols = s->cols - TEXT_MARGIN;
+  if (max_cols > MAX_TEXT_WIDTH)
+    max_cols = MAX_TEXT_WIDTH;
+  if (max_cols < MIN_TEXT_WIDTH)
+    max_cols = MIN_TEXT_WIDTH;
   int x_off = (s->cols - max_cols) / 2 + 1;
   if (x_off < 1)
     x_off = 1;
