@@ -74,7 +74,7 @@ Both modifiers compose. The wordlist is never mutated; transforms happen on samp
 
 WPM and accuracy match monkeytype:
 
-- WPM = `(correct_word_chars + correct_spaces) / 5 / minutes`. Only fully-correct words contribute. In-progress word gets partial credit if all typed chars match so far.
+- WPM = `(correct_word_chars + correct_word_count) / 5 / minutes`. Only fully-correct words contribute chars and count. In-progress word gets partial char credit if all typed chars match so far. Auto-ended last word (words mode) gets char credit but no count (no space pressed).
 - Raw WPM = `(all_typed_chars + spaces) / 5 / minutes`.
 - Accuracy = `correct_keys / (correct_keys + incorrect_keys)`. Per-keystroke; backspacing and retyping never recovers lost accuracy.
 
