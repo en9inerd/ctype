@@ -40,11 +40,7 @@ void on_char(State *s, char c) {
   if (c == ' ') {
     if (w->typed_len == 0)
       return;
-    bool ok = (w->typed_len == w->target_len);
-    for (int i = 0; ok && i < w->target_len; i++)
-      if (w->typed[i] != w->target[i])
-        ok = false;
-    if (ok) {
+    if (!word_imperfect(w)) {
       s->correct_keys++;
       s->correct_word_chars += w->target_len;
       s->correct_word_count++;
@@ -66,18 +62,10 @@ void on_char(State *s, char c) {
     w->typed[w->typed_len++] = c;
     w->typed[w->typed_len] = '\0';
     if (s->mode == MODE_WORDS && s->cur_word == s->words_target - 1 &&
-        w->typed_len == w->target_len) {
-      bool match = true;
-      for (int i = 0; i < w->target_len; i++)
-        if (w->typed[i] != w->target[i]) {
-          match = false;
-          break;
-        }
-      if (match) {
-        w->finalized = true;
-        s->correct_word_chars += w->target_len;
-        s->cur_word++;
-      }
+        w->typed_len == w->target_len && !word_imperfect(w)) {
+      w->finalized = true;
+      s->correct_word_chars += w->target_len;
+      s->cur_word++;
     }
   }
 }
