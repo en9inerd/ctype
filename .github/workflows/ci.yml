@@ -1,0 +1,124 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.tag.outputs.version }}
+      new_tag: ${{ steps.tag.outputs.new_tag }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+
+      - name: Build
+        run: zig build
+
+      - name: Run tests
+        run: zig build test
+
+      - name: Auto-tag from conventional commits
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        id: tag
+        run: |
+          last_tag=$(git describe --tags --abbrev=0 2>/dev/null || true)
+
+          if [ -z "$last_tag" ]; then
+            major=0; minor=0; patch=0
+            range="HEAD"
+          else
+            major=$(echo "$last_tag" | sed 's/v//' | cut -d. -f1)
+            minor=$(echo "$last_tag" | sed 's/v//' | cut -d. -f2)
+            patch=$(echo "$last_tag" | sed 's/v//' | cut -d. -f3)
+            range="${last_tag}..HEAD"
+          fi
+
+          subjects=$(git log "$range" --pretty=format:"%s" 2>/dev/null || true)
+          bodies=$(git log "$range" --pretty=format:"%b" 2>/dev/null || true)
+
+          bump="none"
+
+          if echo "$subjects" | grep -qE '^feat(\(.*\))?!:' || \
+             echo "$bodies" | grep -q 'BREAKING CHANGE'; then
+            bump="major"
+          elif echo "$subjects" | grep -qE '^feat(\(.*\))?:'; then
+            bump="minor"
+          elif echo "$subjects" | grep -qE '^fix(\(.*\))?:'; then
+            bump="patch"
+          fi
+
+          if [ "$bump" = "none" ]; then
+            echo "No version bump needed"
+            exit 0
+          fi
+
+          case "$bump" in
+            major) major=$((major + 1)); minor=0; patch=0 ;;
+            minor) minor=$((minor + 1)); patch=0 ;;
+            patch) patch=$((patch + 1)) ;;
+          esac
+
+          new_tag="v${major}.${minor}.${patch}"
+          version="${major}.${minor}.${patch}"
+          echo "Bumping ${last_tag:-v0.0.0} -> $new_tag ($bump)"
+
+          git tag "$new_tag"
+          git push origin "$new_tag"
+
+          echo "new_tag=$new_tag" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  release:
+    needs: test
+    if: needs.test.outputs.version != ''
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+
+      - name: Build cross-platform binaries and .deb packages
+        env:
+          VERSION: ${{ needs.test.outputs.version }}
+        run: bash ./scripts/build.sh
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.test.outputs.new_tag }}
+          files: dist/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Homebrew formula
+        env:
+          TAP_REPO_TOKEN: ${{ secrets.TAP_REPO_TOKEN }}
+        run: |
+          bash scripts/update-homebrew.sh \
+            "${{ needs.test.outputs.version }}" \
+            dist \
+            "https://x-access-token:${TAP_REPO_TOKEN}@github.com/en9inerd/homebrew-tap.git"
