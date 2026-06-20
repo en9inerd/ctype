@@ -1,6 +1,6 @@
 # ctype
 
-A small terminal typing test. C23, built with Zig. macOS and Linux. No runtime dependencies beyond libc.
+A small terminal typing test. Odin. macOS and Linux. No runtime dependencies beyond libc.
 
 ```
 ctype                # 25 words (default)
@@ -38,13 +38,12 @@ Both methods install the binary and the default wordlist.
 
 ## Building
 
-Requires [Zig 0.16+](https://ziglang.org).
+Requires [Odin](https://odin-lang.org).
 
 ```sh
-make            # debug build
-make release    # optimized build
-make test       # run unit tests
-make install    # install to ~/.local (PREFIX=... to override)
+make odin-build    # debug build
+make odin-release  # optimized build
+make odin-install  # install to ~/.local (PREFIX=... to override)
 ```
 
 ## Wordlist
@@ -83,22 +82,21 @@ Each completed run appends a JSON line to `~/.local/share/ctype/stats.jsonl`. `c
 ## Cross-compile
 
 ```sh
-zig build -Dtarget=x86_64-linux-musl -Doptimize=ReleaseFast
-zig build -Dtarget=aarch64-macos     -Doptimize=ReleaseFast
+odin build odin/ -out:ctype -target:linux_amd64  -o:aggressive
+odin build odin/ -out:ctype -target:darwin_arm64 -o:aggressive
 ```
 
-Linux musl builds are fully static. Windows is not supported (POSIX termios).
+Windows is not supported (POSIX termios).
 
 ## Layout
 
 ```
-src/
-├── types.h      shared structs and constants
-├── term.c/h     raw mode, signals, frame buffer, ANSI escapes
-├── words.c/h    wordlist parsing, sampling, punct/numbers, compaction
-├── stats.c/h    WPM math, JSONL i/o, --stats, --graph
-├── input.c/h    typing input handling, backspace, auto-end
-├── render.c/h   palette, viewport scrolling, draw loop
-├── test_main.c  unit tests
-└── main.c       argv, run loop, input dispatch
+odin/
+├── types.odin   shared structs and constants
+├── term.odin    raw mode, signals, frame buffer, ANSI escapes
+├── words.odin   wordlist parsing, sampling, punct/numbers, compaction
+├── stats.odin   WPM math, JSONL i/o, --stats, --graph
+├── input.odin   typing input handling, backspace, auto-end
+├── render.odin  palette, viewport scrolling, draw loop
+└── main.odin    argv, run loop, input dispatch
 ```

@@ -1,8 +1,10 @@
-PREFIX  ?= $(HOME)/.local
-BIN     := zig-out/bin/ctype
-VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
+PREFIX   ?= $(HOME)/.local
+BIN      := zig-out/bin/ctype
+ODIN_BIN := odin-out/ctype
+VERSION  := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 
-.PHONY: all build release run test install uninstall clean stats reset
+.PHONY: all build release run test install uninstall clean stats reset \
+        odin-build odin-release odin-run odin-install odin-clean
 
 all: build
 
@@ -33,3 +35,24 @@ stats: build
 
 reset: build
 	./$(BIN) --reset-stats
+
+# --- Odin ---
+
+odin-build:
+	mkdir -p odin-out
+	odin build odin/ -out:$(ODIN_BIN) -define:CTYPE_VERSION=$(VERSION)
+
+odin-release:
+	mkdir -p odin-out
+	odin build odin/ -out:$(ODIN_BIN) -define:CTYPE_VERSION=$(VERSION) -o:aggressive
+
+odin-run: odin-build
+	./$(ODIN_BIN)
+
+odin-install: odin-release
+	install -d $(PREFIX)/bin $(PREFIX)/share/ctype
+	install -m 755 $(ODIN_BIN) $(PREFIX)/bin/ctype
+	install -m 644 assets/words_en.txt $(PREFIX)/share/ctype/words.txt
+
+odin-clean:
+	rm -rf odin-out

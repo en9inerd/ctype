@@ -301,3 +301,4 @@ docgen_tmp/
 zig-out/
 .zig-cache/
 zig-cache/
+odin-out/

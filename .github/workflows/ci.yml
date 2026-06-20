@@ -86,7 +86,7 @@ jobs:
           echo "new_tag=$new_tag" >> "$GITHUB_OUTPUT"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
-  release:
+  odin-release:
     needs: test
     if: needs.test.outputs.version != ''
     runs-on: ubuntu-latest
@@ -95,15 +95,36 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Set up Zig
-        uses: mlugg/setup-zig@v2
+      - name: Set up Odin
+        uses: laytan/setup-odin@v2
         with:
-          version: 0.16.0
+          release: nightly
 
-      - name: Build cross-platform binaries and .deb packages
+      - name: Build and package all targets
         env:
           VERSION: ${{ needs.test.outputs.version }}
-        run: bash ./scripts/build.sh
+        run: bash ./scripts/odin-release.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: odin-release
+          path: dist/*
+
+  release:
+    needs: [test, odin-release]
+    if: needs.test.outputs.version != ''
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Download Odin artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: odin-release
+          path: dist
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
