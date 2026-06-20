@@ -189,6 +189,7 @@ usage :: proc(use_stderr: bool) {
 	if use_stderr { fmt.eprint(text) } else { fmt.print(text) }
 }
 
+when !ODIN_TEST {
 main :: proc() {
 	ts: posix.timespec
 	posix.clock_gettime(.MONOTONIC, &ts)
@@ -264,3 +265,4 @@ main :: proc() {
 	delete(s.pool)
 	delete(s.pool_buf)
 }
+} // when !ODIN_TEST

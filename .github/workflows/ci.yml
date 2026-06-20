@@ -32,6 +32,9 @@ jobs:
       - name: Build
         run: mkdir -p odin-out && odin build odin/ -out:odin-out/ctype
 
+      - name: Test
+        run: odin test odin/ -define:CTYPE_VERSION=dev
+
       - name: Auto-tag from conventional commits
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         id: tag
