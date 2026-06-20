@@ -89,26 +89,43 @@ jobs:
   odin-release:
     needs: test
     if: needs.test.outputs.version != ''
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            filter: linux
+            artifact: odin-linux
+          - os: macos-13
+            filter: darwin_amd64
+            artifact: odin-darwin_amd64
+          - os: macos-latest
+            filter: darwin_arm64
+            artifact: odin-darwin_arm64
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+
+      - name: Install lld
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y lld
 
       - name: Set up Odin
         uses: laytan/setup-odin@v2
         with:
           release: nightly
 
-      - name: Build and package all targets
+      - name: Build and package
         env:
           VERSION: ${{ needs.test.outputs.version }}
+          TARGET_FILTER: ${{ matrix.filter }}
         run: bash ./scripts/odin-release.sh
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: odin-release
+          name: ${{ matrix.artifact }}
           path: dist/*
 
   release:
@@ -123,8 +140,9 @@ jobs:
       - name: Download Odin artifacts
         uses: actions/download-artifact@v4
         with:
-          name: odin-release
+          pattern: odin-*
           path: dist
+          merge-multiple: true
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
