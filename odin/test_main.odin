@@ -43,32 +43,32 @@ approx :: proc(t: ^testing.T, got, expected, eps: f64, loc := #caller_location) 
 @(test)
 test_word_imperfect_perfect :: proc(t: ^testing.T) {
 	w: Word
-	copy(w.target[:], []byte("hello")); w.target_len = 5
-	copy(w.typed[:],  []byte("hello")); w.typed_len  = 5
+	copy(w.target[:], transmute([]u8)string("hello")); w.target_len = 5
+	copy(w.typed[:],  transmute([]u8)string("hello")); w.typed_len  = 5
 	testing.expect(t, !word_imperfect(&w))
 }
 
 @(test)
 test_word_imperfect_wrong_char :: proc(t: ^testing.T) {
 	w: Word
-	copy(w.target[:], []byte("hello")); w.target_len = 5
-	copy(w.typed[:],  []byte("hallo")); w.typed_len  = 5
+	copy(w.target[:], transmute([]u8)string("hello")); w.target_len = 5
+	copy(w.typed[:],  transmute([]u8)string("hallo")); w.typed_len  = 5
 	testing.expect(t, word_imperfect(&w))
 }
 
 @(test)
 test_word_imperfect_too_short :: proc(t: ^testing.T) {
 	w: Word
-	copy(w.target[:], []byte("hello")); w.target_len = 5
-	copy(w.typed[:],  []byte("hel"));   w.typed_len  = 3
+	copy(w.target[:], transmute([]u8)string("hello")); w.target_len = 5
+	copy(w.typed[:],  transmute([]u8)string("hel"));   w.typed_len  = 3
 	testing.expect(t, word_imperfect(&w))
 }
 
 @(test)
 test_word_imperfect_too_long :: proc(t: ^testing.T) {
 	w: Word
-	copy(w.target[:], []byte("hi")); w.target_len = 2
-	copy(w.typed[:],  []byte("his")); w.typed_len = 3
+	copy(w.target[:], transmute([]u8)string("hi")); w.target_len = 2
+	copy(w.typed[:],  transmute([]u8)string("his")); w.typed_len = 3
 	testing.expect(t, word_imperfect(&w))
 }
 
@@ -408,7 +408,7 @@ test_gen_number_no_leading_zero :: proc(t: ^testing.T) {
 
 @(test)
 test_parse_wordlist_basic :: proc(t: ^testing.T) {
-	data := []byte("hello\nworld\nfoo\n")
+	data := transmute([]u8)string("hello\nworld\nfoo\n")
 	pool, ok := parse_wordlist(data)
 	defer if pool != nil { delete(pool) }
 	testing.expect(t, ok)
@@ -422,7 +422,7 @@ test_parse_wordlist_basic :: proc(t: ^testing.T) {
 
 @(test)
 test_parse_wordlist_skip_long :: proc(t: ^testing.T) {
-	data := []byte("hi\nabcdefghijklmnopqrstuvwxyz12345\nok\n")
+	data := transmute([]u8)string("hi\nabcdefghijklmnopqrstuvwxyz12345\nok\n")
 	pool, ok := parse_wordlist(data)
 	defer if pool != nil { delete(pool) }
 	testing.expect(t, ok)
@@ -435,7 +435,7 @@ test_parse_wordlist_skip_long :: proc(t: ^testing.T) {
 
 @(test)
 test_parse_wordlist_skip_nonascii :: proc(t: ^testing.T) {
-	data := []byte("good\nbad\x80word\nfine\n")
+	data := transmute([]u8)string("good\nbad\x80word\nfine\n")
 	pool, ok := parse_wordlist(data)
 	defer if pool != nil { delete(pool) }
 	testing.expect(t, ok)
@@ -448,7 +448,7 @@ test_parse_wordlist_skip_nonascii :: proc(t: ^testing.T) {
 
 @(test)
 test_parse_wordlist_trim_whitespace :: proc(t: ^testing.T) {
-	data := []byte("  hello  \n  world  \n")
+	data := transmute([]u8)string("  hello  \n  world  \n")
 	pool, ok := parse_wordlist(data)
 	defer if pool != nil { delete(pool) }
 	testing.expect(t, ok)
@@ -461,7 +461,7 @@ test_parse_wordlist_trim_whitespace :: proc(t: ^testing.T) {
 
 @(test)
 test_parse_wordlist_empty :: proc(t: ^testing.T) {
-	data := []byte("\n\n\n")
+	data := transmute([]u8)string("\n\n\n")
 	pool, ok := parse_wordlist(data)
 	testing.expect(t, !ok)
 	testing.expect_value(t, len(pool), 0)
@@ -469,7 +469,7 @@ test_parse_wordlist_empty :: proc(t: ^testing.T) {
 
 @(test)
 test_parse_wordlist_crlf :: proc(t: ^testing.T) {
-	data := []byte("one\r\ntwo\r\n")
+	data := transmute([]u8)string("one\r\ntwo\r\n")
 	pool, ok := parse_wordlist(data)
 	defer if pool != nil { delete(pool) }
 	testing.expect(t, ok)
@@ -485,7 +485,7 @@ test_parse_wordlist_crlf :: proc(t: ^testing.T) {
 @(test)
 test_punct_capitalize_first :: proc(t: ^testing.T) {
 	w: Word
-	copy(w.target[:], []byte("hello")); w.target_len = 5
+	copy(w.target[:], transmute([]u8)string("hello")); w.target_len = 5
 	lc: byte = 0
 	apply_punct(&w, &lc)
 	testing.expect_value(t, w.target[0], byte('H'))
@@ -494,7 +494,7 @@ test_punct_capitalize_first :: proc(t: ^testing.T) {
 @(test)
 test_punct_capitalize_after_period :: proc(t: ^testing.T) {
 	w: Word
-	copy(w.target[:], []byte("world")); w.target_len = 5
+	copy(w.target[:], transmute([]u8)string("world")); w.target_len = 5
 	lc: byte = '.'
 	apply_punct(&w, &lc)
 	testing.expect_value(t, w.target[0], byte('W'))
