@@ -82,8 +82,8 @@ Each completed run appends a JSON line to `~/.local/share/ctype/stats.jsonl`. `c
 ## Cross-compile
 
 ```sh
-odin build odin/ -out:ctype -target:linux_amd64  -o:aggressive
-odin build odin/ -out:ctype -target:darwin_arm64 -o:aggressive
+odin build odin/ -out:ctype -target:linux_amd64  -o:minimal
+odin build odin/ -out:ctype -target:darwin_arm64 -o:minimal
 ```
 
 Windows is not supported (POSIX termios).

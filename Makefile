@@ -44,7 +44,7 @@ odin-build:
 
 odin-release:
 	mkdir -p odin-out
-	odin build odin/ -out:$(ODIN_BIN) -define:CTYPE_VERSION=$(VERSION) -o:aggressive
+	odin build odin/ -out:$(ODIN_BIN) -define:CTYPE_VERSION=$(VERSION) -o:minimal
 
 odin-run: odin-build
 	./$(ODIN_BIN)

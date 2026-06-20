@@ -25,7 +25,7 @@ for entry in "${targets[@]}"; do
 
   echo "Building ctype for $odin_target (v$VERSION)"
   odin build odin/ -out:odin-out/ctype -target:$odin_target \
-    -define:CTYPE_VERSION="$VERSION" -o:aggressive
+    -define:CTYPE_VERSION="$VERSION" -o:minimal
 
   staging=$(mktemp -d)
   cp odin-out/ctype "$staging/ctype"
