@@ -13,15 +13,14 @@ detect_target() {
   arch="$(uname -m)"
 
   case "$os" in
-    Darwin) os_tag="macos" ;;
-    Linux)  os_tag="linux" ;;
-    *)      die "unsupported OS: $os" ;;
-  esac
-
-  case "$arch" in
-    x86_64|amd64)   arch_tag="x86_64" ;;
-    arm64|aarch64)   arch_tag="aarch64" ;;
-    *)               die "unsupported arch: $arch" ;;
+    Darwin) os_tag="macos"; arch_tag="aarch64" ;;
+    Linux)  os_tag="linux"
+      case "$arch" in
+        x86_64|amd64)  arch_tag="x86_64" ;;
+        arm64|aarch64) arch_tag="aarch64" ;;
+        *) die "unsupported arch: $arch" ;;
+      esac ;;
+    *) die "unsupported OS: $os" ;;
   esac
 
   printf '%s-%s' "$arch_tag" "$os_tag"

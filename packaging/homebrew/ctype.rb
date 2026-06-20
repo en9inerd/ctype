@@ -5,13 +5,8 @@ class Ctype < Formula
   version "VERSION_PLACEHOLDER"
 
   on_macos do
-    if Hardware::CPU.arm?
-      url "https://github.com/en9inerd/ctype/releases/download/vVERSION_PLACEHOLDER/ctype_aarch64-macos.tar.gz"
-      sha256 "SHA256_MACOS_ARM64"
-    else
-      url "https://github.com/en9inerd/ctype/releases/download/vVERSION_PLACEHOLDER/ctype_x86_64-macos.tar.gz"
-      sha256 "SHA256_MACOS_X86_64"
-    end
+    url "https://github.com/en9inerd/ctype/releases/download/vVERSION_PLACEHOLDER/ctype_aarch64-macos.tar.gz"
+    sha256 "SHA256_MACOS_ARM64"
   end
 
   on_linux do

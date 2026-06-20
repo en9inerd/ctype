@@ -13,7 +13,6 @@ mkdir -p "$DIST_DIR" odin-out
 targets=(
   "linux_amd64:x86_64-linux:amd64"
   "linux_arm64:aarch64-linux:arm64"
-  "darwin_amd64:x86_64-macos:"
   "darwin_arm64:aarch64-macos:"
 )
 
