@@ -93,8 +93,11 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            filter: linux
-            artifact: odin-linux
+            filter: linux_amd64
+            artifact: odin-linux_amd64
+          - os: ubuntu-24.04-arm
+            filter: linux_arm64
+            artifact: odin-linux_arm64
           - os: macos-13
             filter: darwin_amd64
             artifact: odin-darwin_amd64
@@ -106,10 +109,6 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
-      - name: Install lld
-        if: runner.os == 'Linux'
-        run: sudo apt-get install -y lld
 
       - name: Set up Odin
         uses: laytan/setup-odin@v2

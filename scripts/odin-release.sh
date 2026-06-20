@@ -3,18 +3,10 @@ set -euo pipefail
 
 DIST_DIR="dist"
 VERSION=${VERSION:-dev}
-TARGET_FILTER=${TARGET_FILTER:-}       # e.g. "linux" or "darwin" — empty = all
+TARGET_FILTER=${TARGET_FILTER:-}       # e.g. "linux_amd64" or "darwin_arm64" — empty = all
 DESCRIPTION="Terminal typing test"
 MAINTAINER="en9inerd"
 URL="https://github.com/en9inerd/ctype"
-
-# detect native arch for cross-compile lld check
-case "$(uname -m)" in
-  x86_64)  NATIVE_ARCH="amd64" ;;
-  aarch64) NATIVE_ARCH="arm64" ;;
-  arm64)   NATIVE_ARCH="arm64" ;;
-  *)       NATIVE_ARCH="unknown" ;;
-esac
 
 mkdir -p "$DIST_DIR" odin-out
 
@@ -32,15 +24,9 @@ for entry in "${targets[@]}"; do
     continue
   fi
 
-  # use lld when cross-compiling between linux architectures
-  linker_flag=""
-  if [[ "$odin_target" == linux_* ]] && [[ "$odin_target" != *"$NATIVE_ARCH"* ]]; then
-    linker_flag="-linker:lld"
-  fi
-
   echo "Building ctype for $odin_target (v$VERSION)"
   odin build odin/ -out:odin-out/ctype -target:$odin_target \
-    -define:CTYPE_VERSION="$VERSION" -o:aggressive $linker_flag
+    -define:CTYPE_VERSION="$VERSION" -o:aggressive
 
   staging=$(mktemp -d)
   cp odin-out/ctype "$staging/ctype"
