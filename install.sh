@@ -14,7 +14,7 @@ detect_target() {
 
   case "$os" in
     Darwin) os_tag="macos" ;;
-    Linux)  os_tag="linux-musl" ;;
+    Linux)  os_tag="linux" ;;
     *)      die "unsupported OS: $os" ;;
   esac
 

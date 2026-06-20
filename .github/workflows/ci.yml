@@ -24,16 +24,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Zig
-        uses: mlugg/setup-zig@v2
+      - name: Set up Odin
+        uses: laytan/setup-odin@v2
         with:
-          version: 0.16.0
+          release: nightly
 
       - name: Build
-        run: zig build
-
-      - name: Run tests
-        run: zig build test
+        run: mkdir -p odin-out && odin build odin/ -out:odin-out/ctype
 
       - name: Auto-tag from conventional commits
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'

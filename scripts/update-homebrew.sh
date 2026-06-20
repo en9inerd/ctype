@@ -7,8 +7,8 @@ TAP_REPO="${3:?tap repo URL required}"
 
 sha_of() { shasum -a 256 "${DIST}/$1" | awk '{print $1}'; }
 
-SHA_LINUX_X86_64=$(sha_of ctype_x86_64-linux-musl.tar.gz)
-SHA_LINUX_ARM64=$(sha_of ctype_aarch64-linux-musl.tar.gz)
+SHA_LINUX_X86_64=$(sha_of ctype_x86_64-linux.tar.gz)
+SHA_LINUX_ARM64=$(sha_of ctype_aarch64-linux.tar.gz)
 SHA_MACOS_X86_64=$(sha_of ctype_x86_64-macos.tar.gz)
 SHA_MACOS_ARM64=$(sha_of ctype_aarch64-macos.tar.gz)
 

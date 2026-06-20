@@ -16,10 +16,10 @@ class Ctype < Formula
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/en9inerd/ctype/releases/download/vVERSION_PLACEHOLDER/ctype_aarch64-linux-musl.tar.gz"
+      url "https://github.com/en9inerd/ctype/releases/download/vVERSION_PLACEHOLDER/ctype_aarch64-linux.tar.gz"
       sha256 "SHA256_LINUX_ARM64"
     else
-      url "https://github.com/en9inerd/ctype/releases/download/vVERSION_PLACEHOLDER/ctype_x86_64-linux-musl.tar.gz"
+      url "https://github.com/en9inerd/ctype/releases/download/vVERSION_PLACEHOLDER/ctype_x86_64-linux.tar.gz"
       sha256 "SHA256_LINUX_X86_64"
     end
   end

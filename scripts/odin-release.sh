@@ -26,7 +26,7 @@ for entry in "${targets[@]}"; do
   cp odin-out/ctype "$staging/ctype"
   cp assets/words_en.txt "$staging/words.txt"
 
-  tar -czf "$DIST_DIR/ctype_${artifact_target}-odin.tar.gz" -C "$staging" ctype words.txt
+  tar -czf "$DIST_DIR/ctype_${artifact_target}.tar.gz" -C "$staging" ctype words.txt
   rm -rf "$staging"
 
   if [[ -n "$deb_arch" ]]; then
@@ -50,7 +50,7 @@ Section: utils
 Priority: optional
 EOF
 
-    deb_name="ctype_${VERSION}_${deb_arch}-odin.deb"
+    deb_name="ctype_${VERSION}_${deb_arch}.deb"
     dpkg-deb --build --root-owner-group "$pkg_dir" "$DIST_DIR/$deb_name"
     rm -rf "$pkg_dir"
   fi
