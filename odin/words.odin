@@ -166,14 +166,13 @@ resolve_wordlist_path :: proc(cli_arg: string) -> string {
 		if file_exists(p) do return p
 	}
 
-	if file_exists("/usr/local/share/ctype/words.txt") do return "/usr/local/share/ctype/words.txt"
-	if file_exists("/usr/share/ctype/words.txt")       do return "/usr/share/ctype/words.txt"
-
-	if len(os.args) > 0 {
-		dir  := filepath.dir(os.args[0])
+	if dir, err := os.get_executable_directory(context.temp_allocator); err == nil {
 		p, _ := filepath.join([]string{dir, "..", "share", "ctype", "words.txt"}, context.temp_allocator)
 		if file_exists(p) do return p
 	}
+
+	if file_exists("/usr/local/share/ctype/words.txt") do return "/usr/local/share/ctype/words.txt"
+	if file_exists("/usr/share/ctype/words.txt")       do return "/usr/share/ctype/words.txt"
 
 	if file_exists("./assets/words_en.txt") do return "./assets/words_en.txt"
 	return ""

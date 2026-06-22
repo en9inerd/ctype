@@ -41,9 +41,9 @@ Both methods install the binary and the default wordlist.
 Requires [Odin](https://odin-lang.org).
 
 ```sh
-make odin-build    # debug build
-make odin-release  # optimized build
-make odin-install  # install to ~/.local (PREFIX=... to override)
+make build    # debug build
+make release  # optimized build
+make install  # install to ~/.local (PREFIX=... to override)
 ```
 
 ## Wordlist

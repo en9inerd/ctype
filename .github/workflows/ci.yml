@@ -86,7 +86,7 @@ jobs:
           echo "new_tag=$new_tag" >> "$GITHUB_OUTPUT"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
-  odin-release:
+  package:
     needs: test
     if: needs.test.outputs.version != ''
     strategy:
@@ -94,13 +94,13 @@ jobs:
         include:
           - os: ubuntu-latest
             filter: linux_amd64
-            artifact: odin-linux_amd64
+            artifact: linux_amd64
           - os: ubuntu-24.04-arm
             filter: linux_arm64
-            artifact: odin-linux_arm64
+            artifact: linux_arm64
           - os: macos-latest
             filter: darwin_arm64
-            artifact: odin-darwin_arm64
+            artifact: darwin_arm64
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -125,7 +125,7 @@ jobs:
           path: dist/*
 
   release:
-    needs: [test, odin-release]
+    needs: [test, package]
     if: needs.test.outputs.version != ''
     runs-on: ubuntu-latest
 
@@ -133,10 +133,10 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Download Odin artifacts
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: odin-*
+          pattern: '*_*'
           path: dist
           merge-multiple: true
 
